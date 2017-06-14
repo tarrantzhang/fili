@@ -10,6 +10,9 @@ Current
 
 ### Added:
 
+- [Add custom dimension row serializer](https://github.com/yahoo/fili/pull/399)
+    * Add custom dimension row serializer so that dimension row serialize into dimension row cache correctly
+
 - [Add dimension dictionary to metric loader](https://github.com/yahoo/fili/pull/317)
     * Added a two argument version of `loadMetricDictionary` default method in `MetricLoader` interface that allows dimension
     dependent metrics by providing a dimension dictionary given by `ConfigurationLoader`
