@@ -10,7 +10,7 @@ import com.yahoo.bard.webservice.async.jobs.stores.JobRowFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;

@@ -13,7 +13,7 @@ import com.yahoo.bard.webservice.web.ResponseFormatType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Observer;
+import io.reactivex.observers.DefaultObserver;
 
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
@@ -22,7 +22,7 @@ import javax.ws.rs.core.UriInfo;
 /**
  * Converts preResponse/errorResponse into HTTP Responses, and ships them immediately to the client.
  */
-public class HttpResponseChannel implements Observer<PreResponse> {
+public class HttpResponseChannel extends DefaultObserver<PreResponse> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpResponseChannel.class);
 
@@ -71,7 +71,7 @@ public class HttpResponseChannel implements Observer<PreResponse> {
     }
 
     @Override
-    public void onCompleted() {
+    public void onComplete() {
         /* Keeping this method empty on purpose. This method will be invoked only when there is a message to publish.
          * In this contract, we always receive a message to publish to an end user.
          */

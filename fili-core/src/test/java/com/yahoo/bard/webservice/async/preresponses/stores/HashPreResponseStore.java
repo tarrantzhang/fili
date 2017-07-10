@@ -4,7 +4,7 @@ package com.yahoo.bard.webservice.async.preresponses.stores;
 
 import com.yahoo.bard.webservice.web.PreResponse;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

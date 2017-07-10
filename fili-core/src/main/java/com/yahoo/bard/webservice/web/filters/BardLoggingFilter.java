@@ -14,9 +14,9 @@ import org.glassfish.jersey.filter.LoggingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Observable;
-import rx.subjects.ReplaySubject;
-import rx.subjects.Subject;
+import io.reactivex.Observable;
+import io.reactivex.subjects.ReplaySubject;
+import io.reactivex.subjects.Subject;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
@@ -149,7 +149,7 @@ public class BardLoggingFilter implements ContainerRequestFilter, ContainerRespo
         // if response is not yet finalized, we must intercept the output stream
         if (response.getLength() == -1 && response.hasEntity()) {
             //Pass the length of the response stream to the epilogue as soon as we know what that length is.
-            Subject<Long, Long> lengthBroadcaster = ReplaySubject.create();
+            Subject<Long> lengthBroadcaster = ReplaySubject.create();
             lengthBroadcaster.subscribe(responseLengthObserver);
             OutputStream stream = new LengthOfOutputStream(response.getEntityStream(), lengthBroadcaster);
 
@@ -325,9 +325,9 @@ public class BardLoggingFilter implements ContainerRequestFilter, ContainerRespo
      * @param stream  Stream to get the length from
      */
     private void emitSuccess(@NotNull LengthOfOutputStream stream) {
-        Subject<Long, Long> lengthBroadcaster = stream.getLengthBroadcaster();
+        Subject<Long> lengthBroadcaster = stream.getLengthBroadcaster();
         lengthBroadcaster.onNext(stream.getResponseLength());
-        lengthBroadcaster.onCompleted();
+        lengthBroadcaster.onComplete();
     }
 
     /**
@@ -337,7 +337,7 @@ public class BardLoggingFilter implements ContainerRequestFilter, ContainerRespo
      * @param t  Error that was encountered (to be published)
      */
     private void emitError(LengthOfOutputStream stream, Throwable t) {
-        Subject<Long, Long> lengthBroadcaster = stream.getLengthBroadcaster();
+        Subject<Long> lengthBroadcaster = stream.getLengthBroadcaster();
         lengthBroadcaster.onNext(stream.getResponseLength());
         lengthBroadcaster.onError(t);
     }
@@ -380,7 +380,7 @@ public class BardLoggingFilter implements ContainerRequestFilter, ContainerRespo
     static private class LengthOfOutputStream extends OutputStream {
         private long length;
         private final OutputStream outputStream;
-        private final Subject<Long, Long> lengthBroadcaster;
+        private final Subject<Long> lengthBroadcaster;
 
         /**
          * Constructor.
@@ -388,7 +388,7 @@ public class BardLoggingFilter implements ContainerRequestFilter, ContainerRespo
          * @param outputStream  OutputStream to get the length of
          * @param lengthBroadcaster  Subject to publish events to (final length and completion status or error)
          */
-        LengthOfOutputStream(OutputStream outputStream, Subject<Long, Long> lengthBroadcaster) {
+        LengthOfOutputStream(OutputStream outputStream, Subject<Long> lengthBroadcaster) {
             this.outputStream = outputStream;
             this.lengthBroadcaster = lengthBroadcaster;
             this.length = 0;
@@ -406,7 +406,7 @@ public class BardLoggingFilter implements ContainerRequestFilter, ContainerRespo
             length++;
         }
 
-        public Subject<Long, Long> getLengthBroadcaster() {
+        public Subject<Long> getLengthBroadcaster() {
             return lengthBroadcaster;
         }
 

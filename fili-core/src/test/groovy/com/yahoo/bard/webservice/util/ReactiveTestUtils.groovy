@@ -2,10 +2,10 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.util
 
-import rx.Subscriber
-import rx.observers.TestSubscriber
-import rx.Observable
-import spock.lang.Specification
+import org.reactivestreams.Subscriber
+
+import io.reactivex.Observable
+import io.reactivex.subscribers.TestSubscriber
 
 import java.util.concurrent.TimeUnit
 

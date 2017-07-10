@@ -6,8 +6,8 @@ import com.yahoo.bard.webservice.application.JerseyTestBinder
 import com.yahoo.bard.webservice.data.config.names.DataSourceName
 import com.yahoo.bard.webservice.data.dimension.DimensionColumn
 import com.yahoo.bard.webservice.data.metric.MetricColumn
-import com.yahoo.bard.webservice.metadata.TestDataSourceMetadataService
 import com.yahoo.bard.webservice.table.PhysicalTableDictionary
+import com.yahoo.bard.webservice.util.SimplifiedIntervalList
 
 import org.joda.time.Interval
 
@@ -15,13 +15,32 @@ import spock.lang.Specification
 
 import java.util.stream.Collectors
 import java.util.stream.Stream
-
 /**
  * Contains a collection of utility methods to aid in testing functionality that relies on table availability, like
  * partial data and volatility.
  */
 class AvailabilityTestingUtils extends Specification {
 
+    static class TestAvailability implements Availability {
+        Availability source;
+        Set<Interval> intervals;
+
+        TestAvailability(Availability source, Set<Interval> intervals) {
+            this.source = source
+            this.intervals = intervals
+        }
+
+        @Override
+        Set<DataSourceName> getDataSourceNames() {
+            return source.getDataSourceNames()
+        }
+
+        Map<String, SimplifiedIntervalList> getAllAvailableIntervals() {
+            source.getAvailableIntervals().collectEntries {
+                [(it.key) : intervals]
+            }
+        }
+    }
     /**
      * Make the specified physical tables believe they have data available for the specified interval.
      *
@@ -59,10 +78,7 @@ class AvailabilityTestingUtils extends Specification {
 
                     // set new cache
                     table.setAvailability(
-                            new StrictAvailability(
-                                    DataSourceName.of(table.name),
-                                    new TestDataSourceMetadataService(allIntervals)
-                            )
+                            new TestAvailability(table.getAvailability(table.getAvailability(), intervalSet))
                     )
                 }
     }

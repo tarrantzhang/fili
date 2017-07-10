@@ -5,7 +5,7 @@ package com.yahoo.bard.webservice.async.workflows;
 import com.yahoo.bard.webservice.async.jobs.jobrows.JobRow;
 import com.yahoo.bard.webservice.web.PreResponse;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * A bean containing the Observables for each of the message flows needed to support asynchronous processing:

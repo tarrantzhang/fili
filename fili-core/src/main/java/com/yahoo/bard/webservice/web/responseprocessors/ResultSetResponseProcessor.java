@@ -31,7 +31,7 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.subjects.Subject;
+import io.reactivex.subjects.Subject;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -48,7 +48,7 @@ public class ResultSetResponseProcessor extends MappingResponseProcessor impleme
 
     private static final Logger LOG = LoggerFactory.getLogger(ResultSetResponseProcessor.class);
 
-    protected final Subject<PreResponse, PreResponse> responseEmitter;
+    protected final Subject<PreResponse> responseEmitter;
     protected final Granularity granularity;
     protected final DruidResponseParser druidResponseParser;
     protected HttpResponseMaker httpResponseMaker;
@@ -64,7 +64,7 @@ public class ResultSetResponseProcessor extends MappingResponseProcessor impleme
      */
     public ResultSetResponseProcessor(
             DataApiRequest apiRequest,
-            Subject<PreResponse, PreResponse> responseEmitter,
+            Subject<PreResponse> responseEmitter,
             DruidResponseParser druidResponseParser,
             ObjectMappersSuite objectMappers,
             HttpResponseMaker httpResponseMaker
@@ -111,7 +111,7 @@ public class ResultSetResponseProcessor extends MappingResponseProcessor impleme
             responseContext.put(REQUESTED_API_DIMENSION_FIELDS.getName(), requestedApiDimensionFields);
 
             responseEmitter.onNext(new PreResponse(resultSet, responseContext));
-            responseEmitter.onCompleted();
+            responseEmitter.onComplete();
         } catch (PageNotFoundException invalidPage) {
             LOG.debug(invalidPage.getLogMessage());
             responseEmitter.onError(new ResponseException(

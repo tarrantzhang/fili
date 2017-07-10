@@ -2,7 +2,7 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.util;
 
-import rx.Observer;
+import io.reactivex.observers.DefaultObserver;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @param <T>  The type of message this Observer caches
  */
-public class CacheLastObserver<T> implements Observer<T> {
+public class CacheLastObserver<T> extends DefaultObserver<T> {
 
     private AtomicReference<T> lastMessageReceived = new AtomicReference<>();
     private AtomicReference<Throwable> error = new AtomicReference<>();
 
     @Override
-    public void onCompleted() {
+    public void onComplete() {
         //Intentionally left blank.
     }
 

@@ -16,7 +16,7 @@ import com.yahoo.bard.webservice.web.ErrorMessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.subjects.Subject;
+import io.reactivex.subjects.Subject;
 
 import java.io.Serializable;
 import java.util.List;

@@ -411,11 +411,16 @@
                 <version>4.5.2</version>
             </dependency>
 
-            <!-- ReactiveX -->
+            <!-- RxJava v2.x -->
             <dependency>
-                <groupId>io.reactivex</groupId>
+                <groupId>io.reactivex.rxjava2</groupId>
                 <artifactId>rxjava</artifactId>
-                <version>1.2.2</version>
+                <version>2.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.akarnokd</groupId>
+                <artifactId>rxjava2-interop</artifactId>
+                <version>0.8.3</version>
             </dependency>
 
             <!-- Memcached -->

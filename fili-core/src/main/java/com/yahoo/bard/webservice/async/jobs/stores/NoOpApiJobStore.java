@@ -4,7 +4,7 @@ package com.yahoo.bard.webservice.async.jobs.stores;
 
 import com.yahoo.bard.webservice.async.jobs.jobrows.JobRow;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 import java.util.Set;
 

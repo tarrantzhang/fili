@@ -46,9 +46,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Observable;
-import rx.exceptions.Exceptions;
-import rx.observables.ConnectableObservable;
+import io.reactivex.Observable;
+import io.reactivex.exceptions.Exceptions;
+import io.reactivex.observables.ConnectableObservable;
 
 import java.io.IOException;
 import java.net.URI;
@@ -182,6 +182,7 @@ public class JobsServlet extends EndpointServlet {
             apiRequest.getJobViews().toList()
                     .map(jobs -> jobsApiRequest.getPage(paginationFactory.apply(jobs)))
                     .map(result -> formatResponse(jobsApiRequest, result, "jobs", null))
+                    .toObservable()
                     .defaultIfEmpty(getResponse("{}"))
                     .onErrorReturn(this::getErrorResponse)
                     .subscribe(

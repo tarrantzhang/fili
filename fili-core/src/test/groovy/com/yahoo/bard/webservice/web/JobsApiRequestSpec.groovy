@@ -17,8 +17,8 @@ import com.yahoo.bard.webservice.async.preresponses.stores.PreResponseStore
 import com.yahoo.bard.webservice.async.preresponses.stores.PreResponseTestingUtils
 import com.yahoo.bard.webservice.async.broadcastchannels.SimpleBroadcastChannel
 
-import rx.observers.TestSubscriber
-import rx.subjects.PublishSubject;
+import io.reactivex.subscribers.TestSubscriber
+import io.reactivex.subjects.PublishSubject;
 import spock.lang.Specification
 
 import javax.ws.rs.core.UriBuilder

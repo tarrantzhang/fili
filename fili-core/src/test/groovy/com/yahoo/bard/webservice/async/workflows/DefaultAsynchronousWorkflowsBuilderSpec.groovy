@@ -24,9 +24,9 @@ import com.fasterxml.jackson.databind.ObjectWriter
 
 import org.joda.time.DateTime
 
-import rx.Observable
-import rx.observers.TestSubscriber
-import rx.subjects.PublishSubject
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subscribers.TestSubscriber
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject

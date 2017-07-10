@@ -4,7 +4,7 @@ package com.yahoo.bard.webservice.async.preresponses.stores;
 
 import com.yahoo.bard.webservice.web.PreResponse;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * PreResponseStore is responsible for storing PreResponses. It is essentially a key-value mapping between a ticket

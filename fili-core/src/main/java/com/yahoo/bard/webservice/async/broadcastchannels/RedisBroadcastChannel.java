@@ -8,9 +8,9 @@ import com.yahoo.bard.webservice.config.SystemConfigProvider;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
 
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -36,7 +36,7 @@ public class RedisBroadcastChannel<T> implements BroadcastChannel<T> {
     );
 
     private volatile RTopic<T> topic;
-    private final Subject<T, T> notifications;
+    private final Subject<T> notifications;
     private final int listenerId;
     private final ReadWriteLock topicReadWriteLock;
 
@@ -77,7 +77,7 @@ public class RedisBroadcastChannel<T> implements BroadcastChannel<T> {
             if (topic != null) {
                 topic.removeListener(listenerId);
                 topic = null;
-                notifications.onCompleted();
+                notifications.onComplete();
             }
         } finally {
             topicReadWriteLock.writeLock().unlock();

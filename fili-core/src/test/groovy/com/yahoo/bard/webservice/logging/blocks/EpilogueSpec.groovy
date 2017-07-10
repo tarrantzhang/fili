@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import rx.Observable
+import io.reactivex.Observable
 
 
 class EpilogueSpec extends Specification {

@@ -18,8 +18,8 @@ import com.yahoo.bard.webservice.web.PreResponse
 
 import com.fasterxml.jackson.databind.JsonNode
 
-import rx.subjects.PublishSubject
-import rx.subjects.Subject
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 
 import spock.lang.Specification
 
@@ -30,7 +30,7 @@ class MappingResponseProcessorSpec extends Specification{
     GroupByQuery groupByQuery
     DataApiRequest apiRequest
     ObjectMappersSuite objectMappers
-    Subject<PreResponse, PreResponse> mappingResponseChannel
+    Subject<PreResponse> mappingResponseChannel
 
     def setup() {
         groupByQuery = Mock(GroupByQuery)

@@ -2,8 +2,8 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.async.broadcastchannels;
 
-import rx.Observable;
-import rx.subjects.Subject;
+import io.reactivex.Observable;
+import io.reactivex.subjects.Subject;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -19,7 +19,7 @@ import javax.inject.Singleton;
 @Singleton
 public class SimpleBroadcastChannel<T> implements BroadcastChannel<T> {
 
-    private final Subject<T, T> notifications;
+    private final Subject<T> notifications;
     private final ReadWriteLock isClosedLock;
     private volatile boolean isClosed;
 
@@ -29,7 +29,7 @@ public class SimpleBroadcastChannel<T> implements BroadcastChannel<T> {
      * @param notifications  A hot subject that will be used to send messages to and receive messages from other
      * SimpleBroadcastChannels
      */
-    public SimpleBroadcastChannel(Subject<T, T> notifications) {
+    public SimpleBroadcastChannel(Subject<T> notifications) {
         this.notifications = notifications;
         this.isClosedLock = new ReentrantReadWriteLock();
         this.isClosed = false;
@@ -59,7 +59,7 @@ public class SimpleBroadcastChannel<T> implements BroadcastChannel<T> {
         try {
             if (!isClosed) {
                 isClosed = true;
-                notifications.onCompleted();
+                notifications.onComplete();
             }
         } finally {
             isClosedLock.writeLock().unlock();

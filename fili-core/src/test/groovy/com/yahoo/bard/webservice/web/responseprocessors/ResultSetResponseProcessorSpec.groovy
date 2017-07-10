@@ -42,8 +42,8 @@ import com.google.common.collect.Sets
 
 import org.joda.time.DateTimeZone
 
-import rx.subjects.PublishSubject
-import rx.subjects.Subject
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import spock.lang.Specification
 
 import javax.ws.rs.container.AsyncResponse

@@ -106,7 +106,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.subjects.PublishSubject;
+import io.reactivex.subjects.PublishSubject;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -445,7 +445,7 @@ public abstract class AbstractBinderFactory implements BinderFactory {
      * {@link SimpleBroadcastChannel}, which uses a {@link PublishSubject} to allow cross-thread communication
      */
     protected BroadcastChannel<String> buildBroadcastChannel() {
-        return new SimpleBroadcastChannel<>(PublishSubject.create());
+        return new SimpleBroadcastChannel<String>(PublishSubject.create());
     }
 
     /**

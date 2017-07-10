@@ -12,7 +12,7 @@ import com.yahoo.bard.webservice.web.FilterOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -60,7 +60,7 @@ public class HashJobStore implements ApiJobStore {
 
     @Override
     public Observable<JobRow> getAllRows() {
-        return Observable.from(store.values());
+        return Observable.fromIterable(store.values());
     }
 
     @Override

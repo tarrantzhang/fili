@@ -4,7 +4,7 @@ import com.yahoo.bard.webservice.async.jobs.jobrows.DefaultJobStatus
 import com.yahoo.bard.webservice.async.workflows.TestAsynchronousWorkflowsBuilder
 import com.yahoo.bard.webservice.util.GroovyTestUtils
 
-import rx.Observer
+import io.reactivex.Observer
 
 import java.util.concurrent.CountDownLatch
 

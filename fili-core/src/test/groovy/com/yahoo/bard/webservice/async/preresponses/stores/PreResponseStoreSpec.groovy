@@ -5,7 +5,7 @@ package com.yahoo.bard.webservice.async.preresponses.stores
 import com.yahoo.bard.webservice.util.ReactiveTestUtils
 import com.yahoo.bard.webservice.web.PreResponse
 
-import rx.observers.TestSubscriber
+import io.reactivex.subscribers.TestSubscriber
 import spock.lang.Specification
 import spock.lang.Unroll
 

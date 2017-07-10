@@ -8,8 +8,9 @@ import com.yahoo.bard.webservice.async.preresponses.stores.PreResponseStore;
 import com.yahoo.bard.webservice.util.Either;
 import com.yahoo.bard.webservice.web.PreResponse;
 
-import rx.Observable;
-import rx.Observer;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.observers.DefaultObserver;
 
 import java.time.Clock;
 import java.util.HashMap;
@@ -71,13 +72,13 @@ public class TestAsynchronousWorkflowsBuilder extends DefaultAsynchronousWorkflo
             Runnable onCompleted,
             Consumer<Throwable> onError
     ) {
-        Observer workflowSubscriber = new Observer() {
+        Observer workflowSubscriber = new DefaultObserver() {
             @Override
             public void onNext(Object next) {
                 onNext.accept(next);
             }
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 onCompleted.run();
             }
             @Override

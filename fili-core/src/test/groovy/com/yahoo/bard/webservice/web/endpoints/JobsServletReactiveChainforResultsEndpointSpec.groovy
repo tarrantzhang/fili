@@ -18,9 +18,9 @@ import com.yahoo.bard.webservice.web.RequestMapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.ObjectWriter
 
-import rx.Observable
-import rx.observers.TestSubscriber
-import rx.subjects.PublishSubject
+import io.reactivex.Observable
+import io.reactivex.subscribers.TestSubscriber
+import io.reactivex.subjects.PublishSubject
 import spock.lang.Specification
 import spock.lang.Timeout
 

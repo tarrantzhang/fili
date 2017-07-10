@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Observer;
+import io.reactivex.observers.DefaultObserver;
 
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 /**
  * Handles sending job information to the user.
  */
-public class MetadataHttpResponseChannel implements Observer<String> {
+public class MetadataHttpResponseChannel extends DefaultObserver<String> {
     private static final Logger LOG = LoggerFactory.getLogger(MetadataHttpResponseChannel.class);
 
     private final AsyncResponse asyncResponse;
@@ -39,7 +39,7 @@ public class MetadataHttpResponseChannel implements Observer<String> {
     }
 
     @Override
-    public void onCompleted() {
+    public void onComplete() {
         //Intentionally left blank.
     }
 

@@ -6,10 +6,7 @@ import static com.yahoo.bard.webservice.async.jobs.jobrows.DefaultJobStatus.PEND
 import com.yahoo.bard.webservice.async.workflows.TestAsynchronousWorkflowsBuilder
 import com.yahoo.bard.webservice.util.GroovyTestUtils
 
-import rx.Observer
-
 import java.util.concurrent.CountDownLatch
-
 /**
  * Verifies that the job status is updated to error, and results links return the error message when Druid experiences
  * an error.

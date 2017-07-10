@@ -21,8 +21,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Observable;
-import rx.observables.ConnectableObservable;
+import io.reactivex.Observable;
+import io.reactivex.observables.ConnectableObservable;
 
 import java.time.Clock;
 import java.util.function.Function;

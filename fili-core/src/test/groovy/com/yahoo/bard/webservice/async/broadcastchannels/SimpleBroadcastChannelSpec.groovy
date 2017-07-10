@@ -2,7 +2,7 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.async.broadcastchannels
 
-import rx.subjects.PublishSubject
+import io.reactivex.subjects.PublishSubject
 
 class SimpleBroadcastChannelSpec extends BroadcastChannelSpec {
 
