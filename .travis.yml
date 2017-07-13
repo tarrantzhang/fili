@@ -30,6 +30,7 @@ before_script:
 
 script:
 - travis/deploy.bash
+- ps aux
 
 after_success:
 - echo "Success."
