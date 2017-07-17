@@ -31,7 +31,7 @@ before_script:
 script:
 - travis/deploy.bash
 - ps aux
-- ssh-agent -l
+- ssh-agent -k
 - ps aux
 
 after_success:
