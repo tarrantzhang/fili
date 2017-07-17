@@ -85,7 +85,7 @@ public class DruidHavingBuilder {
             havings.add(new NumericHaving(Having.DefaultHavingType.LESS_THAN, metric.getName(), secondValue));
             return new AndHaving(havings);
         }
-        else if(operation.equals(HavingOperation.notBetween)) {
+        else if (operation.equals(HavingOperation.notBetween)) {
             double firstValue = values.stream().min(Double::compareTo).get();
             double secondValue = values.stream().max(Double::compareTo).get();
             List<Having> havings = new ArrayList<>();
@@ -94,7 +94,7 @@ public class DruidHavingBuilder {
             AndHaving andHaving = new AndHaving(havings);
             return new NotHaving(andHaving);
         }
-        
+
         List<Having> havings = having.getValues().stream()
                 .map(value -> new NumericHaving(operation.getType(), metric.getName(), value))
                 .collect(Collectors.toList());

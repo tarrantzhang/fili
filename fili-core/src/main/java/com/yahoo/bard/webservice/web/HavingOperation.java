@@ -23,7 +23,7 @@ public enum HavingOperation {
     notEqualTo(DefaultHavingType.EQUAL_TO, true, "notEquals", "noteq", "neq"),
     notGreaterThan(DefaultHavingType.GREATER_THAN, true, "notGreater", "notgt", "lte"),
     notLessThan(DefaultHavingType.LESS_THAN, true, "notLess", "notlt", "gte"),
-    between(DefaultHavingType.LESS_THAN, false,"between","bet"),
+    between(DefaultHavingType.LESS_THAN, false, "between", "bet"),
     notBetween(DefaultHavingType.LESS_THAN, true, "notBetween", "nbet");
 
     private static final Map<String, HavingOperation> ALIASES = new HashMap<>();
