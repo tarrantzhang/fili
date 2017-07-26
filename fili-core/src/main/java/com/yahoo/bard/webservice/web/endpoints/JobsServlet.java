@@ -463,9 +463,8 @@ public class JobsServlet extends EndpointServlet {
                 .subscribe(
                         new HttpResponseChannel(
                                 asyncResponse,
-                                httpResponseMaker,
-                                apiRequest.getFormat(),
-                                apiRequest.getUriInfo()
+                                apiRequest,
+                                httpResponseMaker
                         )
                 );
     }

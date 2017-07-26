@@ -16,6 +16,7 @@ import com.yahoo.bard.webservice.data.dimension.DimensionDictionary;
 import com.yahoo.bard.webservice.data.dimension.DimensionField;
 import com.yahoo.bard.webservice.druid.model.query.DruidQuery;
 import com.yahoo.bard.webservice.util.Pagination;
+import com.yahoo.bard.webservice.web.ApiRequest;
 import com.yahoo.bard.webservice.web.PreResponse;
 import com.yahoo.bard.webservice.web.Response;
 import com.yahoo.bard.webservice.web.ResponseFormatType;
@@ -30,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -52,6 +54,7 @@ public class HttpResponseMaker {
      * @param objectMappers  Mappers object for serialization
      * @param dimensionDictionary  The dimension dictionary from which to look up dimensions by name
      */
+    @Inject
     public HttpResponseMaker(ObjectMappersSuite objectMappers, DimensionDictionary dimensionDictionary) {
         this.objectMappers = objectMappers;
         this.dimensionDictionary = dimensionDictionary;
@@ -63,13 +66,15 @@ public class HttpResponseMaker {
      * @param preResponse  PreResponse object which contains result set, response context and headers
      * @param responseFormatType  The format in which the response should be returned to the user
      * @param uriInfo  UriInfo of the request
+     * @param apiRequest apiRequest needed for serialization writer
      *
      * @return Completely built response with headers and result set
      */
     public javax.ws.rs.core.Response buildResponse(
             PreResponse preResponse,
             ResponseFormatType responseFormatType,
-            UriInfo uriInfo
+            UriInfo uriInfo,
+            ApiRequest apiRequest
     ) {
         ResponseBuilder rspBuilder = createResponseBuilder(
                 preResponse.getResultSet(),

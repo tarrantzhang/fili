@@ -40,6 +40,7 @@ import com.yahoo.bard.webservice.logging.blocks.DruidFilterInfo;
 import com.yahoo.bard.webservice.table.LogicalTable;
 import com.yahoo.bard.webservice.table.resolver.NoMatchFoundException;
 import com.yahoo.bard.webservice.util.Either;
+import com.yahoo.bard.webservice.web.ApiRequest;
 import com.yahoo.bard.webservice.web.DataApiRequest;
 import com.yahoo.bard.webservice.web.PreResponse;
 import com.yahoo.bard.webservice.web.RequestMapper;
@@ -404,6 +405,7 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
                     apiRequest.getAsyncAfter(),
                     apiRequest.getFormat(),
                     uriInfo,
+                    apiRequest,
                     queryResultsEmitter,
                     containerRequestContext,
                     asyncResponse,
@@ -450,6 +452,7 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
      * @param asyncAfter  How long the user is willing to wait for a synchronous request
      * @param responseFormat  The requested format for the response
      * @param uriInfo  The URI of the request
+     * @param apiRequest The apiRequest
      * @param queryResultsEmitter  The observable that will eventually emit the results of the query
      * @param containerRequestContext  The context for the request
      * @param asyncResponse  The channel over which user responses will be sent
@@ -459,6 +462,7 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
             long asyncAfter,
             ResponseFormatType responseFormat,
             UriInfo uriInfo,
+            ApiRequest apiRequest,
             Observable<PreResponse> queryResultsEmitter,
             ContainerRequestContext containerRequestContext,
             AsyncResponse asyncResponse,
@@ -501,9 +505,8 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
         asynchronousWorkflows.getSynchronousPayload().subscribe(
                 new HttpResponseChannel(
                         asyncResponse,
-                        httpResponseMaker,
-                        responseFormat,
-                        uriInfo
+                        apiRequest,
+                        httpResponseMaker
                 )
         );
 
