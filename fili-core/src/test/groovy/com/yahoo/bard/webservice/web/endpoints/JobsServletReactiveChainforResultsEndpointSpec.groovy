@@ -3,6 +3,7 @@
 package com.yahoo.bard.webservice.web.endpoints
 
 import com.yahoo.bard.webservice.application.ObjectMappersSuite
+import com.yahoo.bard.webservice.data.HttpResponseMaker
 import com.yahoo.bard.webservice.data.dimension.DimensionDictionary
 import com.yahoo.bard.webservice.async.jobs.stores.ApiJobStore
 import com.yahoo.bard.webservice.async.broadcastchannels.BroadcastChannel
@@ -45,6 +46,7 @@ class JobsServletReactiveChainforResultsEndpointSpec extends Specification {
     RequestMapper requestMapper
     PreResponseStore mockPreResponseStore
     JobsServlet mockJobServlet
+    HttpResponseMaker httpResponseMaker
 
     def setup() {
         objectMappersSuite = Mock(ObjectMappersSuite)
@@ -61,6 +63,7 @@ class JobsServletReactiveChainforResultsEndpointSpec extends Specification {
 
         preResponseStore = new HashPreResponseStore()
         broadcastChannel = new SimpleBroadcastChannel<>(PublishSubject.create())
+        httpResponseMaker = new HttpResponseMaker(objectMappersSuite, dimensionDictionary)
 
         jobsServlet = new JobsServlet(
                 objectMappersSuite,
@@ -69,7 +72,8 @@ class JobsServletReactiveChainforResultsEndpointSpec extends Specification {
                 preResponseStore,
                 broadcastChannel,
                 dimensionDictionary,
-                requestMapper
+                requestMapper,
+                httpResponseMaker
         )
 
         //Mocked objects for interaction testing
@@ -82,7 +86,8 @@ class JobsServletReactiveChainforResultsEndpointSpec extends Specification {
                 mockPreResponseStore,
                 broadcastChannel,
                 dimensionDictionary,
-                requestMapper
+                requestMapper,
+                httpResponseMaker
         )
     }
 

@@ -912,7 +912,7 @@ public abstract class AbstractBinderFactory implements BinderFactory {
     /**
      * Initializes the factory that builds HttpResponseMaker.
      *
-     * @return An instance of the {@link HttpResponseMaker}
+     * @return an instance of the {@link HttpResponseMaker}
      */
     protected Class<? extends HttpResponseMaker> getHttpResponseMaker() {
         return HttpResponseMaker.class;

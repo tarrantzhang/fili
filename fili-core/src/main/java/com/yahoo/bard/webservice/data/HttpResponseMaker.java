@@ -64,23 +64,19 @@ public class HttpResponseMaker {
      * Build complete response.
      *
      * @param preResponse  PreResponse object which contains result set, response context and headers
-     * @param responseFormatType  The format in which the response should be returned to the user
-     * @param uriInfo  UriInfo of the request
      * @param apiRequest apiRequest needed for serialization writer
      *
      * @return Completely built response with headers and result set
      */
     public javax.ws.rs.core.Response buildResponse(
             PreResponse preResponse,
-            ResponseFormatType responseFormatType,
-            UriInfo uriInfo,
             ApiRequest apiRequest
     ) {
         ResponseBuilder rspBuilder = createResponseBuilder(
                 preResponse.getResultSet(),
                 preResponse.getResponseContext(),
-                responseFormatType,
-                uriInfo
+                apiRequest.getFormat(),
+                apiRequest.getUriInfo()
         );
 
         @SuppressWarnings("unchecked")

@@ -2,20 +2,20 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.data;
 
+import static com.yahoo.bard.webservice.web.handlers.workflow.DruidWorkflow.RESPONSE_WORKFLOW_TIMER;
+
 import com.yahoo.bard.webservice.async.ResponseException;
 import com.yahoo.bard.webservice.logging.RequestLog;
 import com.yahoo.bard.webservice.web.ApiRequest;
 import com.yahoo.bard.webservice.web.PreResponse;
-import com.yahoo.bard.webservice.web.ResponseFormatType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import rx.Observer;
 
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import static com.yahoo.bard.webservice.web.handlers.workflow.DruidWorkflow.RESPONSE_WORKFLOW_TIMER;
 
 /**
  * Converts preResponse/errorResponse into HTTP Responses, and ships them immediately to the client.
@@ -26,8 +26,6 @@ public class HttpResponseChannel implements Observer<PreResponse> {
 
     private final AsyncResponse asyncResponse;
     private final HttpResponseMaker httpResponseMaker;
-    private final ResponseFormatType responseFormatType;
-    private final UriInfo uriInfo;
     private final ApiRequest apiRequest;
 
     /**
@@ -46,8 +44,6 @@ public class HttpResponseChannel implements Observer<PreResponse> {
         this.asyncResponse = asyncResponse;
         this.httpResponseMaker = httpResponseMaker;
         this.apiRequest = apiRequest;
-        this.uriInfo = apiRequest.getUriInfo();
-        this.responseFormatType = apiRequest.getFormat();
     }
 
     @Override
@@ -84,7 +80,7 @@ public class HttpResponseChannel implements Observer<PreResponse> {
 
     @Override
     public void onNext(PreResponse preResponse) {
-        publishResponse(httpResponseMaker.buildResponse(preResponse, responseFormatType, uriInfo, apiRequest));
+        publishResponse(httpResponseMaker.buildResponse(preResponse, apiRequest));
     }
 
     /**

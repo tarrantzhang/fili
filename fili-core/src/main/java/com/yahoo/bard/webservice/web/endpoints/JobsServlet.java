@@ -92,6 +92,7 @@ public class JobsServlet extends EndpointServlet {
     private final BroadcastChannel<String> broadcastChannel;
     private final DimensionDictionary dimensionDictionary;
     private final ObjectWriter writer;
+    private final HttpResponseMaker httpResponseMaker;
 
     /**
      * Constructor.
@@ -103,6 +104,7 @@ public class JobsServlet extends EndpointServlet {
      * @param broadcastChannel  Channel to notify other Bard processes (i.e. long pollers)
      * @param dimensionDictionary  The dimension dictionary from which to look up dimensions by name
      * @param requestMapper  Mapper for changing the API request
+     * @param httpResponseMaker  The factory for building HTTP responses
      */
     @Inject
     public JobsServlet(
@@ -112,7 +114,8 @@ public class JobsServlet extends EndpointServlet {
             PreResponseStore preResponseStore,
             BroadcastChannel<String> broadcastChannel,
             DimensionDictionary dimensionDictionary,
-            @Named(JobsApiRequest.REQUEST_MAPPER_NAMESPACE)RequestMapper requestMapper
+            @Named(JobsApiRequest.REQUEST_MAPPER_NAMESPACE)RequestMapper requestMapper,
+            HttpResponseMaker httpResponseMaker
     ) {
         super(objectMappers);
         this.requestMapper = requestMapper;
@@ -122,6 +125,7 @@ public class JobsServlet extends EndpointServlet {
         this.broadcastChannel = broadcastChannel;
         this.dimensionDictionary = dimensionDictionary;
         this.writer = objectMappers.getMapper().writer();
+        this.httpResponseMaker = httpResponseMaker;
     }
 
     /**
@@ -452,7 +456,6 @@ public class JobsServlet extends EndpointServlet {
             AsyncResponse asyncResponse,
             ApiRequest apiRequest
     ) {
-        HttpResponseMaker httpResponseMaker = new HttpResponseMaker(objectMappers, dimensionDictionary);
 
         preResponseObservable
                 .flatMap(preResponse -> handlePreResponseWithError(

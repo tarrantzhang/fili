@@ -2,6 +2,10 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.data
 
+import static com.yahoo.bard.webservice.data.time.DefaultTimeGrain.DAY
+import static com.yahoo.bard.webservice.web.responseprocessors.ResponseContextKeys.API_METRIC_COLUMN_NAMES
+import static com.yahoo.bard.webservice.web.responseprocessors.ResponseContextKeys.REQUESTED_API_DIMENSION_FIELDS
+
 import com.yahoo.bard.webservice.application.ObjectMappersSuite
 import com.yahoo.bard.webservice.data.dimension.BardDimensionField
 import com.yahoo.bard.webservice.data.dimension.Dimension
@@ -15,16 +19,17 @@ import com.yahoo.bard.webservice.web.PreResponse
 import com.yahoo.bard.webservice.web.ResponseFormatType
 import com.yahoo.bard.webservice.web.responseprocessors.ResponseContext
 import com.yahoo.bard.webservice.web.responseprocessors.ResultSetResponseProcessor
+
 import rx.subjects.PublishSubject
 import rx.subjects.Subject
 import spock.lang.Specification
 
 import javax.ws.rs.container.AsyncResponse
-import javax.ws.rs.core.*
-
-import static com.yahoo.bard.webservice.data.time.DefaultTimeGrain.DAY
-import static com.yahoo.bard.webservice.web.responseprocessors.ResponseContextKeys.API_METRIC_COLUMN_NAMES
-import static com.yahoo.bard.webservice.web.responseprocessors.ResponseContextKeys.REQUESTED_API_DIMENSION_FIELDS
+import javax.ws.rs.core.HttpHeaders
+import javax.ws.rs.core.MultivaluedMap
+import javax.ws.rs.core.PathSegment
+import javax.ws.rs.core.Response
+import javax.ws.rs.core.UriInfo
 
 class HttpResponseMakerSpec extends Specification {
     private static final ObjectMappersSuite MAPPERS = new ObjectMappersSuite()
@@ -101,7 +106,7 @@ class HttpResponseMakerSpec extends Specification {
         PreResponse preResponse = new PreResponse(resultSet, responseContext)
 
         when:
-        Response actual = httpResponseMaker.buildResponse(preResponse, apiRequest.format, apiRequest.uriInfo, apiRequest)
+        Response actual = httpResponseMaker.buildResponse(preResponse, apiRequest)
 
         then:
         actual.getStatus() == 200
@@ -116,7 +121,7 @@ class HttpResponseMakerSpec extends Specification {
         PreResponse preResponse = new PreResponse(resultSet, responseContext)
 
         when: "The Response is built"
-        Response actual = httpResponseMaker.buildResponse(preResponse, apiRequest.format, apiRequest.uriInfo, apiRequest)
+        Response actual = httpResponseMaker.buildResponse(preResponse, apiRequest)
 
         then: "The header is set correctly"
         actual.getHeaderString(HttpHeaders.CONTENT_TYPE) == "text/csv; charset=utf-8"
