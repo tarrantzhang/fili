@@ -97,6 +97,8 @@ class UIJsonResponseSpec extends Specification {
 
 
         and: "An expected json serialization"
+        DataApiRequest apiRequest = Mock(DataApiRequest)
+        apiRequest.getFormat()  >> ResponseFormatType.JSON
         String expectedJSON = """{
             "rows":[{
                         "metricColumn1Name":1234567.1234,
@@ -108,7 +110,7 @@ class UIJsonResponseSpec extends Specification {
         }"""
 
         when: "get and serialize a JsonResponse"
-        Response jro = new Response(
+        ResponseData jro = new ResponseData(
                 resultSet,
                 apiMetricColumnNames,
                 defaultDimensionFieldsToShow,
@@ -117,7 +119,8 @@ class UIJsonResponseSpec extends Specification {
                 volatileIntervals,
                 [:],
                 (Pagination) null,
-                MAPPERS
+                MAPPERS,
+                apiRequest
         )
 
         ByteArrayOutputStream os = new ByteArrayOutputStream()
@@ -137,6 +140,7 @@ class UIJsonResponseSpec extends Specification {
 
         and: "An API Request"
         DataApiRequest apiRequest = Mock(DataApiRequest)
+        apiRequest.getFormat()  >> ResponseFormatType.JSON
         LinkedHashSet<String> apiMetricColumnNames = getApiMetricColumnNames()
 
         apiRequest.getDimensionFields() >> defaultDimensionFieldsToShow
@@ -169,7 +173,7 @@ class UIJsonResponseSpec extends Specification {
         }"""
 
         when: "We get and serialize a JsonResponse for it"
-        Response jro = new Response(
+        ResponseData jro = new ResponseData(
                 resultSet,
                 apiMetricColumnNames,
                 defaultDimensionFieldsToShow,
@@ -178,7 +182,8 @@ class UIJsonResponseSpec extends Specification {
                 volatileIntervals,
                 [:],
                 (Pagination) null,
-                MAPPERS
+                MAPPERS,
+                apiRequest
         )
         ByteArrayOutputStream os = new ByteArrayOutputStream()
         jro.write(os)

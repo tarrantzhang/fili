@@ -107,7 +107,11 @@ class ResponseSpec extends Specification {
 
     Set<Column> columns
     Set<LogicalMetric> testLogicalMetrics
-    Response response
+    ResponseData response
+    CsvResponseWriter csvResponseWriter
+    JsonResponseWriter jsonResponseWriter
+    JsonApiResponseWriter jsonApiResponseWriter
+    FiliResponseWriter filiResponseWriter
     DateTime dateTime = new DateTime(1000L * 60 * 60 * 24 * 365 * 45)
     String formattedDateTime
     DataApiRequest apiRequest = Mock(DataApiRequest)
@@ -183,7 +187,7 @@ class ResponseSpec extends Specification {
         metricColumnsMap = (defaultRequestedMetrics + [new MetricColumn("unrequestedMetric")]).collectEntries {
             [(it): new BigDecimal(10)]
         }
-        response = new Response(
+        response = new ResponseData(
                 buildTestResultSet(metricColumnsMap, defaultRequestedMetrics),
                 apiRequest,
                 new SimplifiedIntervalList(),
@@ -192,6 +196,10 @@ class ResponseSpec extends Specification {
                 (Pagination) null,
                 MAPPERS
         )
+        csvResponseWriter = new CsvResponseWriter()
+        jsonResponseWriter = new JsonResponseWriter()
+        jsonApiResponseWriter = new JsonApiResponseWriter()
+        filiResponseWriter = new FiliResponseWriter()
     }
 
     def cleanup() {
@@ -284,7 +292,7 @@ class ResponseSpec extends Specification {
         resultSet = new ResultSet(schema, [result1, result2])
 
         //response without pagination
-        response = new Response(resultSet, apiRequest, new SimplifiedIntervalList(), volatileIntervals,  [:], (Pagination) null, MAPPERS)
+        response = new ResponseData(resultSet, apiRequest, new SimplifiedIntervalList(), volatileIntervals,  [:], (Pagination) null, MAPPERS)
 
         pagination = Stub(Pagination) {
             getFirstPage() >> 1
@@ -304,14 +312,14 @@ class ResponseSpec extends Specification {
         setup:
         formattedDateTime = dateTime.toString(getDefaultFormat())
 
-        Response paginatedResponse = new Response(
+        ResponseData paginatedResponse = new ResponseData(
                 resultSet,
                 apiRequest,
                 new SimplifiedIntervalList(),
                 volatileIntervals,
                 bodyLinks,
                 pagination,
-                MAPPERS
+                MAPPERS,
         )
         GString metaBlock = """{
                         "pagination": {
@@ -324,7 +332,7 @@ class ResponseSpec extends Specification {
         String expectedJson = withMetaObject(defaultJsonFormat, metaBlock)
 
         ByteArrayOutputStream os = new ByteArrayOutputStream()
-        paginatedResponse.write(os)
+        filiResponseWriter.write(apiRequest, paginatedResponse, os)
 
         expect:
         GroovyTestUtils.compareJson(os.toString(), expectedJson)
@@ -355,7 +363,7 @@ class ResponseSpec extends Specification {
         ResultSet resultSetWithComplexMetrics = buildTestResultSet(metricColumnsMap, defaultRequestedMetrics)
 
         when: "We serialize the response"
-        Response complexResponse = new Response(
+        ResponseData complexResponse = new ResponseData(
                 resultSetWithComplexMetrics,
                 apiRequest,
                 new SimplifiedIntervalList(),
@@ -392,7 +400,7 @@ class ResponseSpec extends Specification {
                         }
                     }"""
 
-        response = new Response(resultSet, apiRequest, new SimplifiedIntervalList(), volatileIntervals, bodyLinks, pagination, MAPPERS)
+        response = new ResponseData(resultSet, apiRequest, new SimplifiedIntervalList(), volatileIntervals, bodyLinks, pagination, MAPPERS)
 
         String expectedJson = withMetaObject(defaultJsonApiFormat, metaBlock)
 
@@ -500,7 +508,7 @@ class ResponseSpec extends Specification {
         Result result = new Result(dimensionRows, metricValues, dateTime)
         ResultSet resultSet = new ResultSet(schema, [result, result])
 
-        Response response = new Response(
+        ResponseData response = new ResponseData(
                 resultSet,
                 apiRequest1,
                 new SimplifiedIntervalList(),
@@ -526,8 +534,7 @@ class ResponseSpec extends Specification {
     def "test CSV response"() {
         setup:
         formattedDateTime = dateTime.toString(getDefaultFormat())
-
-        response.writeCsvResponse(os)
+        csvResponseWriter.write(apiRequest, response, os)
 
         String expectedCSV =
                 """dateTime,product|id,product|desc,platform|id,platform|desc,property|desc,pageViews,timeSpent
@@ -566,7 +573,7 @@ class ResponseSpec extends Specification {
         SimplifiedIntervalList missingIntervals = [new Interval("2014-07-01/2014-07-08"), new Interval(
                 "2014-07-15/2014-07-22"
         )] as SimplifiedIntervalList
-        Response response1 = new Response(
+        ResponseData response1 = new ResponseData(
                 resultSet,
                 apiRequest,
                 missingIntervals,
@@ -607,7 +614,7 @@ class ResponseSpec extends Specification {
                 DateTimeFormatterFactory.OUTPUT_DATETIME_FORMAT,
                 outputDateTimeFormat
         )
-        response = new Response(
+        response = new ResponseData(
                 buildTestResultSet(metricColumnsMap, defaultRequestedMetrics),
                 apiRequest,
                 new SimplifiedIntervalList(),
@@ -646,7 +653,7 @@ class ResponseSpec extends Specification {
         dimensionField.getName() >> "Bar"
 
         expect: "Verify that the correct string is built"
-        Response.getDimensionColumnName(dimension, dimensionField) == "Foo|Bar"
+        ResponseData.getDimensionColumnName(dimension, dimensionField) == "Foo|Bar"
     }
 
     def "Test getDimensionColumnName updates cache"() {
@@ -659,14 +666,14 @@ class ResponseSpec extends Specification {
         dimensionField.getName() >> "Bar"
 
         and: "Remove the fake dimension from the cache, if it exists"
-        Response.DIMENSION_FIELD_COLUMN_NAMES.remove(dimension)
+        ResponseData.DIMENSION_FIELD_COLUMN_NAMES.remove(dimension)
 
         when: "Build, cache and retrieve the name"
-        String name = Response.getDimensionColumnName(dimension, dimensionField)
+        String name = ResponseData.getDimensionColumnName(dimension, dimensionField)
 
         then: "Verify that the name is correct and that the name is in the cache"
         name == "Foo|Bar"
-        Response.DIMENSION_FIELD_COLUMN_NAMES.get(dimension).get(dimensionField) == name
+        ResponseData.DIMENSION_FIELD_COLUMN_NAMES.get(dimension).get(dimensionField) == name
     }
 
     def "Test getDimensionColumnName retrieves from cache"() {
@@ -679,10 +686,10 @@ class ResponseSpec extends Specification {
         0 * dimensionField.getName()
 
         and: "Ensure that the expected value is in the cache"
-        Response.DIMENSION_FIELD_COLUMN_NAMES.put(dimension, [(dimensionField): "Foo|Bar"])
+        ResponseData.DIMENSION_FIELD_COLUMN_NAMES.put(dimension, [(dimensionField): "Foo|Bar"])
 
         expect: "The correct value wil be retrieved without invoking methods on the mock"
-        Response.getDimensionColumnName(dimension, dimensionField) == "Foo|Bar"
+        ResponseData.getDimensionColumnName(dimension, dimensionField) == "Foo|Bar"
     }
 
     /**

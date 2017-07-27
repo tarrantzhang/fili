@@ -18,7 +18,7 @@ import com.yahoo.bard.webservice.druid.model.query.DruidQuery;
 import com.yahoo.bard.webservice.util.Pagination;
 import com.yahoo.bard.webservice.web.ApiRequest;
 import com.yahoo.bard.webservice.web.PreResponse;
-import com.yahoo.bard.webservice.web.Response;
+import com.yahoo.bard.webservice.web.ResponseData;
 import com.yahoo.bard.webservice.web.ResponseFormatType;
 import com.yahoo.bard.webservice.web.handlers.RequestHandlerUtils;
 import com.yahoo.bard.webservice.web.responseprocessors.ResponseContext;
@@ -136,7 +136,7 @@ public class HttpResponseMaker {
                                 LinkedHashMap::new
                         ));
 
-        Response response = new Response(
+        ResponseData response = new ResponseData(
                 resultSet,
                 (LinkedHashSet<String>) responseContext.get(API_METRIC_COLUMN_NAMES.getName()),
                 requestedApiDimensionFields,
@@ -145,7 +145,8 @@ public class HttpResponseMaker {
                 getVolatileIntervalsWithDefault(responseContext),
                 bodyLinks,
                 pagination,
-                objectMappers
+                objectMappers,
+                apiRequest
         );
 
         // pass stream handler as response
