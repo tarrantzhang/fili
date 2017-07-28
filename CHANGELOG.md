@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-All notable changes to Fili will be documented here. Changes are accumulated as new paragraphs at the top of the current
+All notable changes to Fili will be documented here. Changes are accumulated as new paragraphs at the top of the current 
 major version. Each change has a link to the pull request that makes the change and to the issue that triggered the
 pull request if there was one.
 
@@ -12,7 +12,7 @@ Current
 
 - [Fili-security module](https://github.com/yahoo/fili/pull/405)
     * Added security module for fili data security filters
-    * Created `ChainingRequestMapper`, and a set of mappers for gatekeeping on security roles and whitelisting dimension filters.
+    * Created `ChainingRequestMapper`, and a set of mappers for gatekeeping on security roles and whitelisting dimension filters. 
 
 - [Add Table-wide Availability](https://github.com/yahoo/fili/pull/414)
     * Add `availableIntervals` field to tables endpoint by union the availability for the logical table without taking
@@ -305,7 +305,7 @@ Removals:
     * Bound and default versions of getAvailableIntervals and getAllAvailableIntervals added to PhysicalTable interface
     * Package-private optimize tests in `DruidQueryBuilder` moved to protected
     * Immutable `NoVolatileIntervalsFunction` class made final
-
+    
 - [Moved UnionDataSource to support only single tables](https://github.com/yahoo/fili/pull/262)
     * `UnionDataSource` now accepts only single tables instead of sets of tables.
     * `DataSource` now supports `getDataSource()` operation
@@ -384,7 +384,7 @@ Removals:
     * `TableLoader` now takes an additional constructor argument (`DataSourceMetadataService`) for creating tables
     * `PartialDataHandler::findMissingRequestTimeGrainIntervals` now takes `DataSourceConstraint`
     * Renamed `buildTableGroup` method to `buildDimensionSpanningTableGroup`
-
+ 
 - [Restored flexibility about columns for query from DruidResponseParser](https://github.com/yahoo/fili/pull/198)
     * Immutable schemas prevented custom query types from changing `ResultSetSchema` columns.
     * Columns are now sourced from `DruidResponseParser` and default implemented on `DruidAggregationQuery`
@@ -554,7 +554,7 @@ Removals:
 - [Fixed `SegmentMetadataLoader` Unconfigured Dimension Bug](https://github.com/yahoo/fili/pull/197)
     * Immutable availability was failing when attempting to bind segment dimension columns not configured in the
       dimension dictionary.
-    * Fix to filter irrelevant column names.
+    * Fix to filter irrelevant column names. 
 
 - [Major refactor for availability and schemas and tables](https://github.com/yahoo/fili/pull/165)
     * Ordering of fields on serialization could be inconsistent if intermediate stages used `HashSet` or `HashMap`.
@@ -680,8 +680,8 @@ Changes:
 ### Changed:
 
 - [The druid query posting timer has been removed](https://github.com/yahoo/fili/pull/141)
-    * There wasn't really a good way of stopping timing only the posting itself. Since the timer is
-       probably not that useful, it has been removed.
+    * There wasn't really a good way of stopping timing only the posting itself. Since the timer is 
+       probably not that useful, it has been removed. 
 
 - [Dimension Field Tagging and Dynamic Dimension Field Serilization](https://github.com/yahoo/fili/pull/137)
     * Changed `fili-core` dimension endpoint `DimensionField` serialization strategy from hard coded static attributes
@@ -727,7 +727,7 @@ Changes:
     * `Response.StatusType` is the interface that `Response.Status` implements.
     * This will have no impact on current code in Fili that uses `ResponseValidationException`, and it allows customers
       to inject http codes not included in `Response.Status`.
-
+         
 - [Removed "provided" modifier for SLF4J and Logback dependencies in the Wikipedia example](https://github.com/yahoo/fili/pull/102)
 
 - [Updated dependencies](https://github.com/yahoo/fili/pull/103)
@@ -848,7 +848,7 @@ Changes:
     * `AggregationAverageMaker` deprecated conversion method required by deprecated sketch library
 
 - [Metric configuration deprecations](https://github.com/yahoo/fili/pull/124)
-    * Deprecated superfluous constructor of `FilteredAggregator` with superfluous argument
+    * Deprecated superfluous constructor of `FilteredAggregator` with superfluous argument 
     * Deprecated MetricMaker utility method in favor of using new field accessor on Metric
 
 - [Deprecated MetricMaker.getDependentQuery lookup method in favor of simpler direct access](https://github.com/yahoo/fili/pull/124)
@@ -871,7 +871,7 @@ Changes:
     * Discovered a bug where `user_roles` is declared but unset still reads as a list with empty string (included a temporary fix by commenting the variable declaration)
     * Refactored `RoleBasedAuthFilter` and `RoleBasedAuthFilterSpec` for better testing
 
-- [Added missing coverage for `ThetaSketchEstimate` unwrapping in `MetricMaker.getSketchField`](https://github.com/yahoo/fili/pull/128)
+- [Added missing coverage for `ThetaSketchEstimate` unwrapping in `MetricMaker.getSketchField`](https://github.com/yahoo/fili/pull/128) 
 
 - [`DataSource::getNames` now returns Fili identifiers, not fact store identifiers](https://github.com/yahoo/fili/pull/125/files)
 
@@ -883,7 +883,7 @@ Changes:
 
 ### Removed:
 
-- [Removed invalid constructor from SketchRoundUpMappepr](https://github.com/yahoo/fili/pull/148)
+- [Removed invalid constructor from SketchRoundUpMappepr](https://github.com/yahoo/fili/pull/148) 
 
 
 v0.6.29 - 2016/11/16
@@ -914,7 +914,7 @@ New Capabilities & Enhancements:
 
 - [Added Dimension Value implementation for PartitionTableDefinition]
     * Added `DimensionIdFilter` implementation of  `DataSourceFilter`
-    * Created `DimensionListPartitionTableDefinition`
+    * Created `DimensionListPartitionTableDefinition` 
 
 - [Added 'hasAnyRows' to SearchProvider interface](https://github.com/yahoo/fili/pull/259)
     * Has Any Rows allows implementations to optimize queries which only need to identify existence of matches
@@ -936,8 +936,8 @@ New Capabilities & Enhancements:
     * Slice availability can be used to debug availability issues on Physical tables
 
 - [Ability to set headers for requests to Druid](https://github.com/yahoo/fili/pull/62)
-      * The `AsyncDruidWebServiceImpl` now accepts a `Supplier<Map<String, String>>` argument which specifies the headers
-        to add to the Druid data requests. This feature is made configurable through `SystemConfig` in the
+      * The `AsyncDruidWebServiceImpl` now accepts a `Supplier<Map<String, String>>` argument which specifies the headers 
+        to add to the Druid data requests. This feature is made configurable through `SystemConfig` in the 
         `AbstractBinderFactory`.
 
 ### Changed:
@@ -957,12 +957,12 @@ New Capabilities & Enhancements:
     * This change is made to allow running multi-api request with csv format using chrome browser.
 
 - [Improves error messages when querying Druid goes wrong](https://github.com/yahoo/fili/pull/61)
-    * The `ResponseException` now includes a message that prints the `ResponseException`'s internal state
-        (i.e. the druid query and response code) using the error messages
+    * The `ResponseException` now includes a message that prints the `ResponseException`'s internal state 
+        (i.e. the druid query and response code) using the error messages 
         `ErrorMessageFormat::FAILED_TO_SEND_QUERY_TO_DRUID` and `ErrorMessageFormat::ERROR_FROM_DRUID`
-    * The druid query and status code, reason and response body are now logged at the error level in the
+    * The druid query and status code, reason and response body are now logged at the error level in the 
       failure and error callbacks in `AsyncDruidWebServiceImpl`  
-
+          
 - [Fili now supports custom Druid query types](https://github.com/yahoo/fili/pull/57)
     * `QueryType` has been turned into an interface, backed by an enum `DefaultQueryType`.
         - The default implementations of `DruidResponseParser` `DruidQueryBuilder`, `WeightEvaluationQuery` and
@@ -989,9 +989,9 @@ New Capabilities & Enhancements:
 
 - Cleaned up dependencies in pom files
     * Moved version management of dependencies up to the parent Pom's dependency management section
-    * Cleaned up the parent Pom's dependency section to only be those dependencies that truly _every_ sub-project should
+    * Cleaned up the parent Pom's dependency section to only be those dependencies that truly _every_ sub-project should 
       depend on.
-    * Cleaned up sub-project Pom dependency sections to handle and better use the dependencies the parent Pom provides
+    * Cleaned up sub-project Pom dependency sections to handle and better use the dependencies the parent Pom provides 
 
 ### Deprecated:
 
@@ -1022,22 +1022,22 @@ New Capabilities & Enhancements:
 
 - [Adds read locking to all attempts to read the Lucene index](https://github.com/yahoo/fili/pull/52)
     * Before, if Fili attempted to read from the Lucene indices (i.e. processing a query with filters) while loading
-      dimension indices, the request would fail and we would get a `LuceneIndexReaderAlreadyClosedException`. Now, the
+      dimension indices, the request would fail and we would get a `LuceneIndexReaderAlreadyClosedException`. Now, the 
       read locks should ensure that the query processing will wait until indexing completes (and vice versa).
 
 - [Fixes a bug where job metadata was being stored in the `ApiJobStore` even when the results came back synchronously](https://github.com/yahoo/fili/pull/49)
-    * The workflow that updates the job's metadata with `success` was running even when the query was synchronous. That
+    * The workflow that updates the job's metadata with `success` was running even when the query was synchronous. That 
       update also caused the ticket to be stored in the `ApiJobStore`.
     * The delay operator didn't stop the "update" workflow from executing because it viewed an `Observable::onCompleted`
-      call as a message for the purpose of the delay. Since the two observables that that the metadata update gated on
+      call as a message for the purpose of the delay. Since the two observables that that the metadata update gated on 
       are empty when the query is synchronous, the "update metadata" workflow was being triggered every time.
     * The delay operator was replaced by `zipWith` as a gating mechanism.
-
+    
 - [#45, removing sorting from weight check queries](https://github.com/yahoo/fili/pull/46)
 
 - [`JsonSlurper` can now handle sorting lists with mixed-type entries](https://github.com/yahoo/fili/pull/58)
     * even if the list starts with a string, number, or boolean
-
+  
 - [Broken segment metadata with Druid v0.9.1](https://github.com/yahoo/fili/issues/63)
     * Made `NumberedShardSpec` ignore unexpected properties during deserialization
     * Added tests to `DataSourceMetadataLoaderSpec` to test the v.0.9.1 optional field `shardSpec.partitionDimensions`
@@ -1056,7 +1056,7 @@ Jobs resource. Here are the highlights of what's in this release:
 - Filtering and pagination on the Jobs resource
 - A `userId` field for default Job resource representations
 - Package cleanup for the jobs-related classes
-
+ 
 ### Added:
 
 - [`always` keyword for the `asyncAfter` parameter now guarantees that a query will be asynchronous](https://github.com/yahoo/fili/pull/39)
@@ -1076,7 +1076,7 @@ Jobs resource. Here are the highlights of what's in this release:
   * Added `JobRowFilter` to hold filter information
 
 - [QueryTimeLookup Functionality Testing](https://github.com/yahoo/fili/pull/34)
-  * Added two tests `LookupDimensionFilteringDataServletSpec` and `LookupDimensionGroupingDataServletSpec` to test QTL
+  * Added two tests `LookupDimensionFilteringDataServletSpec` and `LookupDimensionGroupingDataServletSpec` to test QTL 
     functionality
 
 - [Lookup Dimension Serializer](https://github.com/yahoo/fili/pull/31)
@@ -1110,7 +1110,7 @@ Jobs resource. Here are the highlights of what's in this release:
     for thread-safe tests.
 
 - [Removed `JobsApiRequest::handleBroadcastChannelNotification`](https://github.com/yahoo/fili/pull/39)
-  * That logic does not really belong in the `JobsApiRequest` (which is responsible for modeling a response, not
+  * That logic does not really belong in the `JobsApiRequest` (which is responsible for modeling a response, not 
     processing it), and has been consolidated into the `JobsServlet`.
 
 - [ISSUE-17](https://github.com/yahoo/fili/issues/17) [Added pagination parameters to `PreResponse`](https://github.com/yahoo/fili/pull/19)
@@ -1120,7 +1120,7 @@ Jobs resource. Here are the highlights of what's in this release:
   * The default job payload generated by `DefaultJobPayloadBuilder` now has a `userId`
 
 - [Removed timing component in JobsApiRequestSpec](https://github.com/yahoo/fili/pull/27)
-  * Rather than setting an async timeout, and then sleeping, `JobsApiRequestSpec::handleBroadcastChannelNotification`
+  * Rather than setting an async timeout, and then sleeping, `JobsApiRequestSpec::handleBroadcastChannelNotification` 
     returns an empty Observable if a timeout occurs before the notification is received now verifies that the Observable
     returned terminates without sending any messages.
 
@@ -1141,11 +1141,11 @@ Jobs resource. Here are the highlights of what's in this release:
   * `AbstractBinderFactory` now uses `TypeAwareDimensionLoader` instead of `KeyValueStoreDimensionLoader`
 
 - [Fix Dimension Serialization Problem with Nested Queries](https://github.com/yahoo/fili/pull/15)
-  * Modified `DimensionToDefaultDimensionSpec` serializer to serialize Dimension to apiName if it's not in the
+  * Modified `DimensionToDefaultDimensionSpec` serializer to serialize Dimension to apiName if it's not in the 
     inner-most query
   * Added `Util::hasInnerQuery` helper in serializer package to determine if query is the inner most query or not
   * Added tests for `DimensionToDefaultDimensionSpec`
-
+    
 #### General:
 
 - [Preserve collection order of dimensions, dimension fields and metrics](https://github.com/yahoo/fili/pull/25)
