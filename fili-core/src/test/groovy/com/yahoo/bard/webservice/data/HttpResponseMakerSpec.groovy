@@ -135,7 +135,7 @@ class HttpResponseMakerSpec extends Specification {
 
         when:
         Response.ResponseBuilder responseBuilder
-        responseBuilder = httpResponseMaker.createResponseBuilder(resultSet, responseContext, apiRequest.format, apiRequest.uriInfo)
+        responseBuilder = httpResponseMaker.createResponseBuilder(resultSet, responseContext, apiRequest)
 
         then:
         responseBuilder != null

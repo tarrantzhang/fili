@@ -75,8 +75,7 @@ public class HttpResponseMaker {
         ResponseBuilder rspBuilder = createResponseBuilder(
                 preResponse.getResultSet(),
                 preResponse.getResponseContext(),
-                apiRequest.getFormat(),
-                apiRequest.getUriInfo()
+                apiRequest
         );
 
         @SuppressWarnings("unchecked")
@@ -96,18 +95,18 @@ public class HttpResponseMaker {
      *
      * @param resultSet  The result set being processed
      * @param responseContext  A meta data container for the state gathered by the web container
-     * @param responseFormatType  The format in which the response should be returned to the user
-     * @param uriInfo  UriInfo of the request
+     * @param apiRequest apiRequest needed for serialization writer
      *
      * @return Build response with requested format and associated meta data info.
      */
     private ResponseBuilder createResponseBuilder(
             ResultSet resultSet,
             ResponseContext responseContext,
-            ResponseFormatType responseFormatType,
-            UriInfo uriInfo
+            ApiRequest apiRequest
     ) {
         @SuppressWarnings("unchecked")
+        ResponseFormatType responseFormatType = apiRequest.getFormat();
+        UriInfo uriInfo = apiRequest.getUriInfo();
         Map<String, URI> bodyLinks = (Map<String, URI>) responseContext.get(
                 PAGINATION_LINKS_CONTEXT_KEY.getName()
         );
