@@ -35,6 +35,12 @@ Current
 
 ### Changed:
 
+- [Refactor Response class and implement new serialization logics](https://github.com/yahoo/fili/pull/455)
+    * Define interface `ResponseWriter` and its default implementation
+    * Refactor `Response` class, splitting into `ResponseData` and three implementations of `ResponseWriter`
+    * Define interface `ResponseWriterSelector` and its default implementation.
+    * Hook up the new serialization logic with `HttpResponseMaker` to replace the old one
+
 - [Make HttpResponseMaker injectable and change functions signature related to custom response creation](https://github.com/yahoo/fili/pull/447)
     * Make `HttpResponseMaker` injectable. `DataServlet` and `JobsServlet` takes `HttpResponseMaker` as input parameter now
     * Add `ApiRequest` to `BuildResponse`, `HttpReponseChannel` and `createResponseBuilder` to enable passing information needed by customizable serialization

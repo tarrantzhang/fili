@@ -20,7 +20,6 @@ import com.yahoo.bard.webservice.util.StreamUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -50,9 +48,9 @@ import javax.ws.rs.core.StreamingOutput;
 /**
  * Response class.
  */
-public class Response {
+public class ResponseData {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Response.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResponseData.class);
     private static final Map<Dimension, Map<DimensionField, String>> DIMENSION_FIELD_COLUMN_NAMES = new HashMap<>();
 
     private final ResultSet resultSet;
@@ -65,7 +63,7 @@ public class Response {
     private final JsonFactory jsonFactory;
     private final Pagination pagination;
     private final CsvMapper csvMapper;
-
+    private final ApiRequest apiRequest;
     /**
      * Constructor.
      *
@@ -78,8 +76,9 @@ public class Response {
      * @param paginationLinks  A mapping from link names to links to be added to the end of the JSON response.
      * @param pagination  The object containing the pagination information. Null if we are not paginating.
      * @param objectMappers  Suite of Object Mappers to use when serializing
+     * @param apiRequest  API Request to get the metric columns from
      */
-    public Response(
+    public ResponseData(
             ResultSet resultSet,
             LinkedHashSet<String> apiMetricColumnNames,
             LinkedHashMap<Dimension, LinkedHashSet<DimensionField>> requestedApiDimensionFields,
@@ -88,7 +87,8 @@ public class Response {
             SimplifiedIntervalList volatileIntervals,
             Map<String, URI> paginationLinks,
             Pagination pagination,
-            ObjectMappersSuite objectMappers
+            ObjectMappersSuite objectMappers,
+            ApiRequest apiRequest
     ) {
         this.resultSet = resultSet;
         this.apiMetricColumns = generateApiMetricColumns(apiMetricColumnNames);
@@ -100,6 +100,7 @@ public class Response {
         this.pagination = pagination;
         this.jsonFactory = new JsonFactory(objectMappers.getMapper());
         this.csvMapper = objectMappers.getCsvMapper();
+        this.apiRequest = apiRequest;
 
         LOG.trace("Initialized with ResultSet: {}", this.resultSet);
     }
@@ -119,7 +120,7 @@ public class Response {
      * DataApiRequest
      */
     @Deprecated
-    public Response(
+    public ResponseData(
             ResultSet resultSet,
             DataApiRequest apiRequest,
             SimplifiedIntervalList missingIntervals,
@@ -139,8 +140,37 @@ public class Response {
                 volatileIntervals,
                 paginationLinks,
                 pagination,
-                objectMappers
+                objectMappers,
+                apiRequest
         );
+    }
+
+    public JsonFactory getJsonFactory() {
+        return jsonFactory;
+    }
+
+    public ResultSet getResultSet() {
+        return resultSet;
+    }
+
+    public SimplifiedIntervalList getMissingIntervals() {
+        return missingIntervals;
+    }
+
+    public SimplifiedIntervalList getVolatileIntervals() {
+        return volatileIntervals;
+    }
+
+    public Pagination getPagination() {
+        return pagination;
+    }
+
+    public static Logger getLOG() {
+        return LOG;
+    }
+
+    public CsvMapper getCsvMapper() {
+        return csvMapper;
     }
 
     /**
@@ -151,211 +181,8 @@ public class Response {
      * @throws IOException if writing to output stream fails
      */
     public void write(OutputStream os) throws IOException {
-        if (responseFormatType == ResponseFormatType.CSV) {
-            writeCsvResponse(os);
-        } else if (responseFormatType == ResponseFormatType.JSONAPI) {
-            writeJsonApiResponse(os, missingIntervals, volatileIntervals, pagination);
-        } else {
-            writeJsonResponse(os, missingIntervals, volatileIntervals, pagination);
-        }
-    }
-
-    /**
-     * Writes JSON-API response.
-     * <p/>
-     * The response when serialized is in the following format:
-     * <pre>
-     * {@code{
-     *   "rows" : [
-     *     {
-     *       "dateTime" : "YYYY-MM-dd HH:mm:ss.SSS",
-     *       "logicalMetric1Name" : logicalMetric1Value,
-     *       "logicalMetric2Name" : logicalMetric2Value,
-     *       ...
-     *       "dimension1Name" : "dimension1ValueKeyValue1",
-     *       "dimension2Name" : "dimension2ValueKeyValue1",
-     *       ...
-     *     }, {
-     *      ...
-     *     }
-     *   ],
-     *   "dimension1Name" : [
-     *     {
-     *       "dimension1KeyFieldName" : "dimension1KeyFieldValue1",
-     *       "dimension1OtherFieldName" : "dimension1OtherFieldValue1"
-     *     }, {
-     *       "dimension1KeyFieldName" : "dimension1KeyFieldValue2",
-     *       "dimension1OtherFieldName" : "dimension1OtherFieldValue2"
-     *     },
-     *     ...
-     *   ],
-     *   "dimension2Name" : [
-     *     {
-     *       "dimension2KeyFieldName" : "dimension2KeyFieldValue1",
-     *       "dimension2OtherFieldName" : "dimension2OtherFieldValue1"
-     *     }, {
-     *       "dimension2KeyFieldName" : "dimension2KeyFieldValue2",
-     *       "dimension2OtherFieldName" : "dimension2OtherFieldValue2"
-     *     },
-     *     ...
-     *   ]
-     *   "linkName1" : "http://uri1",
-     *   "linkName2": "http://uri2",
-     *   ...
-     *   "linkNameN": "http://uriN"
-     * }
-     * }
-     * </pre>
-     *
-     * Where "linkName1" ... "linkNameN" are the N keys in paginationLinks, and "http://uri1" ... "http://uriN" are the
-     * associated URI's.
-     *
-     * @param os  OutputStream
-     * @param missingIntervals  intervals over which partial data exists
-     * @param volatileIntervals  Intervals over which the data is volatile
-     * @param pagination  Contains the pagination metadata (i.e. the number of rows per page, and the page requested).
-     *
-     * @throws IOException if a problem is encountered writing to the OutputStream
-     */
-    private void writeJsonApiResponse(
-            OutputStream os,
-            SimplifiedIntervalList missingIntervals,
-            SimplifiedIntervalList volatileIntervals,
-            Pagination pagination
-    ) throws IOException {
-
-        try (JsonGenerator generator = jsonFactory.createGenerator(os)) {
-            // Holder for the dimension rows in the result set
-            Map<Dimension, Set<Map<DimensionField, String>>> sidecars = new HashMap<>();
-            for (DimensionColumn dimensionColumn : resultSet.getSchema().getColumns(DimensionColumn.class)) {
-                sidecars.put(dimensionColumn.getDimension(), new LinkedHashSet<>());
-            }
-
-            // Start the top-level JSON object
-            generator.writeStartObject();
-
-            // Write the data rows and extract the dimension rows for the sidecars
-            generator.writeArrayFieldStart("rows");
-            for (Result result : resultSet) {
-                generator.writeObject(buildResultRowWithSidecars(result, sidecars));
-            }
-            generator.writeEndArray();
-
-            // Write the sidecar for each dimension
-            for (Entry<Dimension, Set<Map<DimensionField, String>>> sidecar : sidecars.entrySet()) {
-                generator.writeArrayFieldStart(sidecar.getKey().getApiName());
-                for (Map<DimensionField, String> dimensionRow : sidecar.getValue()) {
-
-                    // Write each of the sidecar rows
-                    generator.writeStartObject();
-                    for (DimensionField dimensionField : dimensionRow.keySet()) {
-                        generator.writeObjectField(dimensionField.getName(), dimensionRow.get(dimensionField));
-                    }
-                    generator.writeEndObject();
-                }
-                generator.writeEndArray();
-            }
-
-            writeMetaObject(generator, missingIntervals, volatileIntervals, pagination);
-
-            // End the top-level JSON object
-            generator.writeEndObject();
-        } catch (IOException e) {
-            LOG.error("Unable to write JSON: {}", e.toString());
-            throw e;
-        }
-    }
-
-
-    /**
-     * Writes JSON response.
-     * <p/>
-     * The response when serialized is in the following format
-     * <pre>
-     * {@code
-     * {
-     *     "metricColumn1Name" : metricValue1,
-     *     "metricColumn2Name" : metricValue2,
-     *     .
-     *     .
-     *     .
-     *     "dimensionColumnName" : "dimensionRowDesc",
-     *     "dateTime" : "formattedDateTimeString"
-     * },
-     *   "linkName1" : "http://uri1",
-     *   "linkName2": "http://uri2",
-     *   ...
-     *   "linkNameN": "http://uriN"
-     * }
-     * </pre>
-     *
-     * Where "linkName1" ... "linkNameN" are the N keys in paginationLinks, and "http://uri1" ... "http://uriN" are the
-     * associated URI's.
-     *
-     * @param os  OutputStream
-     * @param missingIntervals  intervals over which partial data exists
-     * @param volatileIntervals  Intervals over which the data is volatile
-     * @param pagination  Contains the pagination metadata (i.e. the number of rows per page, and the page requested).
-     *
-     * @throws IOException if a problem is encountered writing to the OutputStream
-     */
-    private void writeJsonResponse(
-            OutputStream os,
-            SimplifiedIntervalList missingIntervals,
-            SimplifiedIntervalList volatileIntervals,
-            Pagination pagination
-    ) throws IOException {
-
-        try (JsonGenerator g = jsonFactory.createGenerator(os)) {
-            g.writeStartObject();
-
-            g.writeArrayFieldStart("rows");
-            for (Result result : resultSet) {
-                g.writeObject(buildResultRow(result));
-            }
-            g.writeEndArray();
-
-            writeMetaObject(g, missingIntervals, volatileIntervals, pagination);
-
-            g.writeEndObject();
-        } catch (IOException e) {
-            LOG.error("Unable to write JSON: {}", e.toString());
-            throw e;
-        }
-    }
-
-    /**
-     * Writes CSV response.
-     *
-     * @param os  OutputStream
-     *
-     * @throws IOException if a problem is encountered writing to the OutputStreamC
-     */
-    private void writeCsvResponse(OutputStream os) throws IOException {
-        CsvSchema schema = buildCsvHeaders();
-
-        // Just write the header first
-        csvMapper.writer().with(schema.withSkipFirstDataRow(true)).writeValue(os, Collections.emptyMap());
-
-        ObjectWriter writer = csvMapper.writer().with(schema.withoutHeader());
-
-        try {
-            resultSet.stream()
-                    .map(this::buildResultRow)
-                    .forEachOrdered(
-                            row -> {
-                                try {
-                                    writer.writeValue(os, row);
-                                } catch (IOException ioe) {
-                                    String msg = String.format("Unable to write CSV data row: %s", row);
-                                    LOG.error(msg, ioe);
-                                    throw new RuntimeException(msg, ioe);
-                                }
-                            }
-                    );
-        } catch (RuntimeException re) {
-            throw new IOException(re);
-        }
+        ResponseWriter writer = new FiliResponseWriterSelector().select(apiRequest);
+        writer.write(apiRequest, this, os);
     }
 
     /**
@@ -411,11 +238,11 @@ public class Response {
     /**
      * Builds map of result row from a result.
      *
-     * @param result  the result to process
+     * @param result  The result to process
      *
      * @return map of result row
      */
-    private Map<String, Object> buildResultRow(Result result) {
+    public Map<String, Object> buildResultRow(Result result) {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("dateTime", result.getTimeStamp().toString(DateTimeFormatterFactory.getOutputFormatter()));
 
@@ -452,12 +279,12 @@ public class Response {
     /**
      * Builds map of result row from a result and loads the dimension rows into the sidecar map.
      *
-     * @param result  the result to process
+     * @param result  The result to process
      * @param sidecars  Map of sidecar data (dimension rows in the result)
      *
      * @return map of result row
      */
-    private Map<String, Object> buildResultRowWithSidecars(
+    public Map<String, Object> buildResultRowWithSidecars(
             Result result,
             Map<Dimension, Set<Map<DimensionField, String>>> sidecars
     ) {
@@ -543,7 +370,7 @@ public class Response {
      *
      * @throws IOException if the generator throws an IOException.
      */
-    private void writeMetaObject(
+    public void writeMetaObject(
             JsonGenerator generator,
             Collection<Interval> missingIntervals,
             SimplifiedIntervalList volatileIntervals,

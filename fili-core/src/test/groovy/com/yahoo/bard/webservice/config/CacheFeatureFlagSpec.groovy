@@ -2,7 +2,10 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.config
 
-import static com.yahoo.bard.webservice.config.CacheFeatureFlag.*
+import static com.yahoo.bard.webservice.config.CacheFeatureFlag.ETAG
+import static com.yahoo.bard.webservice.config.CacheFeatureFlag.LOCAL_SIGNATURE
+import static com.yahoo.bard.webservice.config.CacheFeatureFlag.NONE
+import static com.yahoo.bard.webservice.config.CacheFeatureFlag.TTL
 
 import spock.lang.Specification
 import spock.lang.Unroll
