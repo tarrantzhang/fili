@@ -116,7 +116,6 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
 
     private final ObjectWriter writer;
     private final ObjectMappersSuite objectMappers;
-
     private final HttpResponseMaker httpResponseMaker;
 
     // Default JodaTime zone to UTC
@@ -447,7 +446,7 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
     /**
      * Builds the asynchronous workflows, and subscribes the appropriate channels to the appropriate workflows.
      *
-     * @param apiRequest The apiRequest
+     * @param apiRequest  DataApiRequest object with all the associated info in it
      * @param queryResultsEmitter  The observable that will eventually emit the results of the query
      * @param containerRequestContext  The context for the request
      * @param asyncResponse  The channel over which user responses will be sent
@@ -460,7 +459,9 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
             AsyncResponse asyncResponse,
             HttpResponseMaker httpResponseMaker
     ) {
-        JobRow jobMetadata = jobRowBuilder.buildJobRow(apiRequest.getUriInfo(), containerRequestContext);
+        UriInfo uriInfo = apiRequest.getUriInfo();
+        long asyncAfter = apiRequest.getAsyncAfter();
+        JobRow jobMetadata = jobRowBuilder.buildJobRow(uriInfo, containerRequestContext);
 
         // We need to decide when a query is synchronous, and when it should stop being synchronous and become
         // asynchronous. We handle that via the timeout mechanism: If more than asyncAfter milliseconds pass without
@@ -470,15 +471,15 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
         // resources once per subscription. A connectable Observable's chain is only executed once
         // regardless of the number of subscriptions.
         ConnectableObservable<Either<PreResponse, JobRow>> payloadEmitter;
-        if (apiRequest.getAsyncAfter() == DataApiRequest.ASYNCHRONOUS_ASYNC_AFTER_VALUE) {
+        if (asyncAfter == DataApiRequest.ASYNCHRONOUS_ASYNC_AFTER_VALUE) {
             payloadEmitter = Observable.just(Either.<PreResponse, JobRow>right(jobMetadata)).publish();
-        } else if (apiRequest.getAsyncAfter() == DataApiRequest.SYNCHRONOUS_ASYNC_AFTER_VALUE) {
+        } else if (asyncAfter == DataApiRequest.SYNCHRONOUS_ASYNC_AFTER_VALUE) {
             payloadEmitter = queryResultsEmitter.map(Either::<PreResponse, JobRow>left).publish();
         } else {
             payloadEmitter = queryResultsEmitter
                     .map(Either::<PreResponse, JobRow>left)
                     .timeout(
-                            apiRequest.getAsyncAfter(),
+                            asyncAfter,
                             TimeUnit.MILLISECONDS,
                             Observable.fromCallable(() -> Either.right(jobMetadata))
                     )
@@ -489,7 +490,7 @@ public class DataServlet extends CORSPreflightServlet implements BardConfigResou
                 queryResultsEmitter,
                 payloadEmitter,
                 jobMetadata,
-                jobRow -> serializeJobRow(jobRow, apiRequest.getUriInfo())
+                jobRow -> serializeJobRow(jobRow, uriInfo)
         );
 
         // Here, we subscribe the HttpResponseChannel to the workflow that generates the Response containing the query

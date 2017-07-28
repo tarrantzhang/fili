@@ -37,7 +37,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * Translates a PreResponse into an HTTP Response containing the results of a query.
@@ -64,7 +63,7 @@ public class HttpResponseMaker {
      * Build complete response.
      *
      * @param preResponse  PreResponse object which contains result set, response context and headers
-     * @param apiRequest apiRequest needed for serialization writer
+     * @param apiRequest  ApiRequest object which contains request related information
      *
      * @return Completely built response with headers and result set
      */
@@ -95,7 +94,7 @@ public class HttpResponseMaker {
      *
      * @param resultSet  The result set being processed
      * @param responseContext  A meta data container for the state gathered by the web container
-     * @param apiRequest apiRequest needed for serialization writer
+     * @param apiRequest  ApiRequest object which contains request related information
      *
      * @return Build response with requested format and associated meta data info.
      */
@@ -106,7 +105,6 @@ public class HttpResponseMaker {
     ) {
         @SuppressWarnings("unchecked")
         ResponseFormatType responseFormatType = apiRequest.getFormat();
-        UriInfo uriInfo = apiRequest.getUriInfo();
         Map<String, URI> bodyLinks = (Map<String, URI>) responseContext.get(
                 PAGINATION_LINKS_CONTEXT_KEY.getName()
         );
@@ -162,7 +160,7 @@ public class HttpResponseMaker {
                         .header(HttpHeaders.CONTENT_TYPE, "text/csv; charset=utf-8")
                         .header(
                                 HttpHeaders.CONTENT_DISPOSITION,
-                                ResponseFormat.getCsvContentDispositionValue(uriInfo)
+                                ResponseFormat.getCsvContentDispositionValue(apiRequest.getUriInfo())
                         );
             case JSON:
                 // Fall-through: Default is JSON

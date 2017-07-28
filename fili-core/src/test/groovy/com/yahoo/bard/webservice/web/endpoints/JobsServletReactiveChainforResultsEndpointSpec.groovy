@@ -26,7 +26,6 @@ import spock.lang.Specification
 import spock.lang.Timeout
 
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 import javax.ws.rs.core.UriInfo
 
@@ -71,7 +70,6 @@ class JobsServletReactiveChainforResultsEndpointSpec extends Specification {
                 jobPayloadBuilder,
                 preResponseStore,
                 broadcastChannel,
-                dimensionDictionary,
                 requestMapper,
                 httpResponseMaker
         )
@@ -85,7 +83,6 @@ class JobsServletReactiveChainforResultsEndpointSpec extends Specification {
                 jobPayloadBuilder,
                 mockPreResponseStore,
                 broadcastChannel,
-                dimensionDictionary,
                 requestMapper,
                 httpResponseMaker
         )
