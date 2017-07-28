@@ -16,8 +16,8 @@ public class FiliResponseWriter implements ResponseWriter {
     /**
      * Selects a writer from mapping and writes response.
      *
-     * @param request Api request
-     * @param responseData  data object containing all the result information
+     * @param request  ApiRequest object with all the associated info in it
+     * @param responseData  Data object containing all the result information
      * @param os  OutputStream
      *
      * @throws IOException if a problem is encountered writing to the OutputStreamC
@@ -32,10 +32,10 @@ public class FiliResponseWriter implements ResponseWriter {
     }
 
     /**
-     * Add ResponseFormatType to writer mapping.
+     * Add ResponseFormatType to writer mapping. Allows user to customize their own writer.
      *
-     * @param type Custom type
-     * @param writer a writer map to the custom type
+     * @param type  Custom type
+     * @param writer  Writer mapped to the custom type
      */
     void addResponseType(ResponseFormatType type, ResponseWriter writer) {
         responseWriterSelector.getWriters().put(type, writer);

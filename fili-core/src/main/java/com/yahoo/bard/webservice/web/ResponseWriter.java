@@ -14,8 +14,8 @@ public interface ResponseWriter {
      * Interface for all responseWriter. Default to use a FiliResponseWriter to writer response according to format
      * type from request.
      *
-     * @param request Api request
-     * @param responseData  data object containing all the result information
+     * @param request  ApiRequest object with all the associated info in it
+     * @param responseData  Data object containing all the result information
      * @param os  OutputStream
      * @throws IOException if a problem is encountered writing to the OutputStream
      */

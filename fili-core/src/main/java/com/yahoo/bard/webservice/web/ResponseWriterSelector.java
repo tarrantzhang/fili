@@ -10,8 +10,8 @@ public interface ResponseWriterSelector {
     /**
      * Select ResponseWriter given certain type of format from DataApiRequest.
      *
-     * @param request request that contains format type
-     * @return a writer of given format type
+     * @param request  ApiRequest object with all the associated info in it
+     * @return  Writer of given format type
      */
     default ResponseWriter select(DataApiRequest request) {
         return new FiliResponseWriterSelector().select(request);

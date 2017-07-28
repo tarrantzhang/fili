@@ -238,7 +238,7 @@ public class ResponseData {
     /**
      * Builds map of result row from a result.
      *
-     * @param result  the result to process
+     * @param result  The result to process
      *
      * @return map of result row
      */
@@ -279,7 +279,7 @@ public class ResponseData {
     /**
      * Builds map of result row from a result and loads the dimension rows into the sidecar map.
      *
-     * @param result  the result to process
+     * @param result  The result to process
      * @param sidecars  Map of sidecar data (dimension rows in the result)
      *
      * @return map of result row

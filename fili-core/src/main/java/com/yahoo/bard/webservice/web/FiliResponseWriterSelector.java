@@ -25,8 +25,8 @@ public class FiliResponseWriterSelector implements ResponseWriterSelector {
     /**
      * Selects a ReponseWriter given the format type from request.
      *
-     * @param request provide the format used to determine writer type
-     * @return a response writer for the given format type
+     * @param request  ApiRequest object with all the associated info in it
+     * @return Response writer for the given format type
      */
     public ResponseWriter select(ApiRequest request) {
         ResponseFormatType format = request.getFormat();

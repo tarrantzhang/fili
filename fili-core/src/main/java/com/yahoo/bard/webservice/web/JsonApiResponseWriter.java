@@ -71,8 +71,8 @@ public class JsonApiResponseWriter implements ResponseWriter {
      * Where "linkName1" ... "linkNameN" are the N keys in paginationLinks, and "http://uri1" ... "http://uriN" are the
      * associated URI's.
      *
-     * @param request Api request
-     * @param responseData  data object containing all the result information
+     * @param request  ApiRequest object with all the associated info in it
+     * @param responseData  Data object containing all the result information
      * @param os  OutputStream
      *
      * @throws IOException if a problem is encountered writing to the OutputStream

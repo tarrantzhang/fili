@@ -16,7 +16,7 @@ public class CsvResponseWriter implements ResponseWriter {
     /**
      * Writes CSV response.
      *
-     * @param request Api request
+     * @param request  ApiRequest object with all the associated info in it
      * @param responseData  data object containing all the result information
      * @param os  OutputStream
      *
